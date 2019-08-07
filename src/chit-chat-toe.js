@@ -35,6 +35,11 @@ class ChitChatToe {
         }
     }
 
+    leaveGame(player, gameName) {
+        const game = this.state.games.find(g => g.name === gameName)
+        game.removePlayer(player)
+    }
+
     chat(obj) {
         const gameName = obj.game
         const msg = obj.message
