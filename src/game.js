@@ -38,6 +38,10 @@ class Game {
         return player
     }
 
+    removePlayer(player) {
+        this._players = this._players.filter(p => p !== player)
+    }
+
     requiresParticipants() {
         return this._players.length === 1
     }
