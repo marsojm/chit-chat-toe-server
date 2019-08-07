@@ -21,13 +21,13 @@ const handleMessage = (socket, data) => {
     console.log(action, game)
     switch (action) {
         case 'START_GAME':
-            io.in(game.name).emit('game-state-updated', { gameState: game.gameState })
+            io.in(game.name).emit('game-state-updated', { gameState: game.gameState() })
             return
         case 'UNABLE_TO_START':
             socket.emit('notification', { message: `Can't start game. Both players need to be present.`})
             return
         case 'GAME_STATE_UPDATED':
-            io.in(game.name).emit('game-state-updated', { gameState: game.gameState })
+            io.in(game.name).emit('game-state-updated', { gameState: game.gameState() })
             return
         case 'NOT_YOUR_TURN':
             socket.emit('notification', { message: `It's not your turn!`})

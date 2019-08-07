@@ -1,31 +1,110 @@
-const initGame = () => {
-    return {
-        turn: null,
-        result: null,
-        board: Array(9).fill(null)
+
+class Game {
+    constructor(name) {
+        this._name = name
+        this._players = [],
+        this._messages = []
+        this._state = {
+            turn: null,
+            board: Array(9).fill(null),
+            status: null
+        }   
     }
-}
 
-const checkResult = (board) => {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-      ]
+    get name() {
+        return this._name
+    }
 
-      for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i]
-        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-          return `${board[a]} has won!` 
+    get players() {
+        return this._players.slice()
+    }
+
+    nextFreePlayer() {
+        if (!this._players.includes('X')) {
+            return 'X'
         }
-      }
+        if (!this._players.includes('O')) {
+            return 'O'
+        }
+        return null
+    }
 
-      return board.every(v => v !== null) ? 'Draw' : null;
+    addPlayer() {
+        const player = this.nextFreePlayer()
+
+        if (player !== null && !this._players.includes(player)) {
+            this._players = this._players.concat(player)
+        }
+
+        return player
+    }
+
+    requiresParticipants() {
+        return this._players.length === 1
+    }
+
+    startGame() {
+        if (this._players.length === 2) {
+            this._state = { ...this._state, turn: 'X' }
+            return true
+        }
+        return false
+    }
+
+    gameState() {
+        return { ...this._state }
+    }
+
+    isPlayersTurn(player) {
+        return this._state.turn === player
+    }
+
+    makeMove(cmd) {
+        const validLetters = {'a': 0,'b': 3,'c': 6 }
+
+        const letterVal = validLetters[cmd[0]]  
+        const numVal = parseInt(cmd[1],10) - 1   
+
+        const coord = letterVal + numVal
+
+        if (this._state.board[coord] !== null) {
+            return false
+        }
+
+        const currentBoard = this._state.board.slice()
+        currentBoard[coord] = this._state.turn
+        const nextPlayer = this._state.turn === 'X' ? 'O' : 'X'
+
+        this._state = { ...this.state, board: currentBoard, turn: nextPlayer }
+
+        return true
+    }
+
+    checkResult(board) {
+        const lines = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+          ]
+    
+          for (let i = 0; i < lines.length; i++) {
+            const [a, b, c] = lines[i]
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+              return `${board[a]} has won!` 
+            }
+          }
+    
+          return board.every(v => v !== null) ? 'Draw' : null;
+    }
+
+    checkWinner() {
+        this._state = { ...this._state, status: this.checkResult(this._state.board) }
+    }
 }
 
 class ChitChatToe {
@@ -36,29 +115,20 @@ class ChitChatToe {
     }
 
     joinGame() {
-        let game = this.state.games.find(game => game.players.length === 1)
+        let game = this.state.games.find(game => game.requiresParticipants())
 
         if (!game) {
             const gameId = Math.random().toString(36).substring(7)
-            const g = {
-                name: `game-${gameId}`,
-                players: [],
-                messages: []
-            }
+            const gameName = `game-${gameId}`
+            const g = new Game(gameName)
 
             this.state.games.push(g)
 
             game = g
         }
 
-        const player = game.players.indexOf('X') === -1 ? 'X' : 'O'
-        this.state.games = this.state.games.map(g => {
-            if (g.name === game.name) {
-                return {...game,  players: game.players.concat(player), gameState: initGame() }
-            }
-            return g
-        })
-        console.log(this.state)
+        const player = game.addPlayer()
+
         return {
             game,
             player
@@ -70,64 +140,37 @@ class ChitChatToe {
         const msg = obj.message
         const pattern = /[a-c|A-C][1-3]/i
 
-        if (msg === '/start') {
+        if (msg === 'start') {
             const game = this.state.games.find(g => g.name === gameName)
     
-            if (game && game.players.length === 2) {
-                game.gameState = {...game.gameState, turn: 'X'}
-                console.log(this.state)
+            if (game && game.startGame()) {
                 return { action: 'START_GAME', game }
-
             } else {
                 return { action: 'UNABLE_TO_START', game: null }
             }
         }
 
         const match = msg.match(pattern)
-        const validLetters = {'a': 0,'b': 3,'c': 6 }
+        
         if (match) {
-            const cmd = match[0]
-
-            const letterVal = validLetters[cmd[0]]  
-            const numVal = parseInt(cmd[1],10) - 1   
-
-            const coord = letterVal + numVal
 
             const game = this.state.games.find(g => g.name === gameName) 
             const currentPlayer = obj.handle
 
-            if (game && currentPlayer === game.gameState.turn) {
-                const currentBoard = this.state.games.find(g => g.name === gameName).gameState.board
-                if (currentBoard[coord] !== null) {
-                    console.log('Invalid move')
+            if (game && game.isPlayersTurn(currentPlayer)) {
+
+                if (!game.makeMove(match[0])) {
+                    console.log('Invalid move', match[0], game)
                     return { action: 'INVALID_MOVE', game: null }
                 }
 
-                this.state.games = this.state.games.map(g => {
-                    if (g.name === game.name) {
-                        let nextPlayer = game.gameState.turn === 'X' ? 'O' : 'X'
-                        const board = game.gameState.board.slice()
+                game.checkWinner()
 
-                        
-
-                        board[coord] = currentPlayer
-                        const result = checkResult(board)
-                        if (result) {
-                            nextPlayer = null
-                        }
-
-                        const gameState = {...game.gameState, turn: nextPlayer, board: board, result: result }
-                        const newGame = {...game, gameState: gameState }
-
-                        return newGame
-                    }
-                    return g
-                })
                 console.log(this.state)
                 return { action: 'GAME_STATE_UPDATED', game: this.state.games.find(g => g.name === gameName)}
                 
             } else {
-
+                console.log(game)
                 return { action: 'NOT_YOUR_TURN', game: null }
                 
             }

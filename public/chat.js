@@ -16,7 +16,7 @@ let game = null
 const STATE = {
     gameState: {
         turn: null,
-        result: null,
+        status: null,
         board: Array(9).fill(null)
     }
 }
@@ -25,12 +25,12 @@ function renderGameState() {
     let turnText = ''
     let resultText = ''
 
-    if (STATE.gameState.turn != null) {
+    if (STATE.gameState.turn != null && STATE.gameState.status === null) {
         turnText = STATE.gameState.turn === handle.value ? `It's your turn!` : 'Waiting for other player to make a move...'
     }
 
-    if (STATE.gameState.result != null) {
-        resultText = STATE.gameState.result
+    if (STATE.gameState.status != null) {
+        resultText = STATE.gameState.status
     }
 
     // the board
@@ -97,6 +97,7 @@ socket.on('notification', (data) => {
 })
 
 socket.on('game-state-updated', (data) => {
+    console.log(data)
     STATE.gameState = {...data.gameState}
 
     renderGameState()
