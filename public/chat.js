@@ -73,7 +73,7 @@ message.addEventListener('keypress', () => {
 // Listen for events
 
 socket.on('chat', (data) =>  {
-    output.innerHTML += `<p><strong class="${data.handle === 'X' ? 'text-primary' : 'text-danger'}">${data.handle}:</strong>${data.message}</p>`
+    output.innerHTML += `<p><strong class="${data.handle === 'X' ? 'text-primary' : 'text-danger'} mr-1">${data.handle}:</strong>${data.message}</p>`
     feedback.innerHTML = ''
     
 })
