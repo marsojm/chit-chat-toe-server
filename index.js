@@ -1,17 +1,27 @@
 const express = require('express')
 const socket = require('socket.io')
 const ChitChatToe = require('./src/chit-chat-toe.js')
+const port = 4000
+
+const chitChatToe = new ChitChatToe()
 
 const app = express()
-const server = app.listen(4000, () => {
-    console.log('Server running. Listening port 4000')
+
+const server = app.listen(port, () => {
+    console.log(`Server running. Listening port ${port}`)
 })
 
 app.use(express.static('public'))
 
+app.get('/reset', (req, res) => {
+    chitChatToe.reset()
+    
+    res.send('Reset success')
+})
+
 const io = socket(server)
 
-const chitChatToe = new ChitChatToe()
+
 
 
 const handleMessage = (socket, data) => {

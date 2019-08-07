@@ -10,6 +10,10 @@ class ChitChatToe {
         }
     }
 
+    reset() {
+        this.state = {...this.state, games: []}
+    }
+
     joinGame() {
         let game = this.state.games.find(game => game.requiresParticipants())
 
