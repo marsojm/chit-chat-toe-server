@@ -85,7 +85,10 @@ socket.on('joined-game', (data) => {
     visibleHandle.innerHTML = `${data.handle}:`
     handle.value = data.handle
     game = data.game
+    STATE.gameState = {...data.gameState}
     gameIdentifier.innerHTML = `${data.game}:`
+    
+    renderGameState()
 })
 
 socket.on('participant-joined-game', (data) => {

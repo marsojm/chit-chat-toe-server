@@ -17,9 +17,9 @@
     </nav>
     <div class="container">
         <div class="row mt-2">
-            <div class="col-8">
-                <p id="turn"></p>
-                <p id="result"></p>
+            <div class="col-8 d-flex justify-content-center">
+                <p id="turn" class="text-success"></p>
+                <p id="result" class="text-success"></p>
             </div>
             <div class="col-4">
 
@@ -29,16 +29,25 @@
             <div class="col-8 px-auto">
                 <div class="game-board ">
                     <div class="board-row d-flex justify-content-center">
+                        <button class="square bg-info text-white"></button>
+                        <button class="square bg-info text-white">1</button>
+                        <button class="square bg-info text-white">2</button>
+                        <button class="square bg-info text-white">3</button>
+                    </div>
+                    <div class="board-row d-flex justify-content-center">
+                        <button class="square bg-info text-white">A</button>
                         <button class="square" id="square1"></button>
                         <button class="square" id="square2"></button>
                         <button class="square" id="square3"></button>
                     </div>
                     <div class="board-row d-flex justify-content-center">
+                        <button class="square bg-info text-white">B</button>
                         <button class="square" id="square4"></button>
                         <button class="square" id="square5"></button>
                         <button class="square" id="square6"></button>
                     </div>
                     <div class="board-row d-flex justify-content-center">
+                        <button class="square bg-info text-white">C</button>
                         <button class="square" id="square7"></button>
                         <button class="square" id="square8"></button>
                         <button class="square" id="square9"></button>
@@ -68,7 +77,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <button class="btn btn-primary" id="connect">Connect</button>
+                
             </div>
             <p>Game: <span id="game-identifier"></span></span></p>
         </div>

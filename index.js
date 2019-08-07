@@ -49,7 +49,7 @@ const joinGame = (socket) => {
 
     socket.join(game.name)
     
-    socket.emit('joined-game', {message: `You have joined game '${game.name}' as ${player}`, handle: player, game: game.name })
+    socket.emit('joined-game', {message: `You have joined game '${game.name}' as ${player}`, handle: player, game: game.name, gameState: game.gameState() })
     socket.to(game.name).emit('participant-joined-game', { message: `Another player has joined the game as ${player}`})
 }
 
@@ -68,6 +68,4 @@ io.on('connection', (socket) => {
     socket.on('typing', (data) => {
         io.to(data.game).emit('typing', data)
     })
-
-    
 })
