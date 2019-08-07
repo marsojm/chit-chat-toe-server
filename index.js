@@ -61,6 +61,14 @@ const joinGame = (socket) => {
     
     socket.emit('joined-game', {message: `You have joined game '${game.name}' as ${player}`, handle: player, game: game.name, gameState: game.gameState() })
     socket.to(game.name).emit('participant-joined-game', { message: `Another player has joined the game as ${player}`})
+
+    socket.on('disconnect', (reason) => {
+        console.log(`Player '${player}' disconnected from game '${game.name}'`)
+        const newState = chitChatToe.leaveGame(player, game.name).gameState()
+
+        socket.to(game.name).emit('notification', { message: `Player '${player}' disconnected from game '${game.name}'`})
+        io.to(game.name).emit('game-state-updated', { gameState: newState })
+    });
 }
 
 
@@ -69,7 +77,6 @@ io.on('connection', (socket) => {
     joinGame(socket)
 
     socket.on('chat', (data) => {
-        // emit to all sockets
         handleMessage(socket, data)
 
         io.in(data.game).emit('chat', data)
@@ -78,4 +85,6 @@ io.on('connection', (socket) => {
     socket.on('typing', (data) => {
         io.to(data.game).emit('typing', data)
     })
+
+    
 })

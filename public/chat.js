@@ -41,6 +41,8 @@ function renderGameState() {
             square.innerHTML = STATE.gameState.board[i]
             const txtColor = STATE.gameState.board[i] === 'X' ? 'text-primary' : 'text-danger'
             square.classList.add(txtColor)
+        } else {
+            square.innerHTML = ''
         }
     }
 
