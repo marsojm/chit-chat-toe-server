@@ -40,6 +40,12 @@ class Game {
 
     removePlayer(player) {
         this._players = this._players.filter(p => p !== player)
+
+        this._state = {
+            turn: null,
+            board: Array(9).fill(null),
+            status: null
+        }
     }
 
     requiresParticipants() {
