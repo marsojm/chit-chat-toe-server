@@ -38,6 +38,12 @@ class ChitChatToe {
     leaveGame(player, gameName) {
         const game = this.state.games.find(g => g.name === gameName)
         game.removePlayer(player)
+
+        if (game.players.length === 0) {
+            this.state = {...this.state, games: this.state.games.filter(g => g.name !== gameName) }
+        }
+
+        return game
     }
 
     chat(obj) {
