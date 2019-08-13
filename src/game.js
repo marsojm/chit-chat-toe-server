@@ -6,7 +6,7 @@ class Game {
         this._state = {
             turn: null,
             board: Array(9).fill(null),
-            status: null
+            status: null,
         }   
     }
 
@@ -61,7 +61,7 @@ class Game {
     }
 
     gameState() {
-        return { ...this._state }
+        return { ...this._state, playerCount: this._players.length }
     }
 
     isPlayersTurn(player) {
@@ -112,7 +112,12 @@ class Game {
     }
 
     checkWinner() {
-        this._state = { ...this._state, status: this.checkResult(this._state.board) }
+        const status = this.checkResult(this._state.board)
+        
+        this._state = { ...this._state, status: status }
+        if (status !== null) {
+            this._state = { ...this._state, turn: null }
+        }
     }
 }
 

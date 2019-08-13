@@ -66,7 +66,8 @@ btn.addEventListener('click', () => {
 
 message.addEventListener('keypress', () => {
     socket.emit('typing', {
-        handle: handle.value
+        handle: handle.value,
+        game: game
     })
 })
 

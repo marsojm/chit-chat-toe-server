@@ -60,7 +60,7 @@ const joinGame = (socket) => {
     socket.join(game.name)
     
     socket.emit('joined-game', {message: `You have joined game '${game.name}' as ${player}`, handle: player, game: game.name, gameState: game.gameState() })
-    socket.to(game.name).emit('participant-joined-game', { message: `Another player has joined the game as ${player}`})
+    socket.to(game.name).emit('participant-joined-game', { message: `Another player has joined the game as ${player}`, gameState: game.gameState()})
 
     socket.on('disconnect', (reason) => {
         console.log(`Player '${player}' disconnected from game '${game.name}'`)
@@ -83,7 +83,8 @@ io.on('connection', (socket) => {
     })
 
     socket.on('typing', (data) => {
-        io.to(data.game).emit('typing', data)
+        console.log(`${data.game}: player ${data.handle} is typing...`)
+        socket.to(data.game).emit('typing', data)
     })
 
     
